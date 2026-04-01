@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/shape_sorter.dir/src/main.cpp.o -o shape_sorter  -Wl,-rpath,/home/sysgen/Projects/Yolanda/libfranka/build /home/sysgen/Projects/Yolanda/libfranka/build/libfranka.so.0.9.2 
