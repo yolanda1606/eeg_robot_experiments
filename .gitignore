@@ -1,0 +1,18 @@
+# CMake and Build folders
+build/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+*.o
+*.out
+
+# Executables
+pick_place
+shape_sorter
+stack
+sisyphus_task
+
+# IDE folders (if you use VSCode etc.)
+.vscode/
+.idea/
