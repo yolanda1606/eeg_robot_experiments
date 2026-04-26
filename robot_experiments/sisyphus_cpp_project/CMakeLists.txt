@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.4)
 project(sisyphus_hri)
 
+# THE MAGIC LINE: Tell CMake to use our custom driver, NOT the ROS 2 one!
+set(Franka_DIR "/home/sysgen/Projects/Yolanda/libfranka/build")
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")

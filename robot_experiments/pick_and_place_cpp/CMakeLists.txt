@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.4)
 project(pick_and_place_cpp)
 
+# Revert back to C++14
 set(CMAKE_CXX_STANDARD 14)
+
+# THE MAGIC LINE: Tell CMake to use our custom driver, NOT the ROS 2 one!
+set(Franka_DIR "/home/sysgen/Projects/Yolanda/libfranka/build")
 
 find_package(Franka REQUIRED)
 find_package(Eigen3 REQUIRED)

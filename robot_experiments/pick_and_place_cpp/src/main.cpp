@@ -3,12 +3,54 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <string>
+
+// Networking headers for Ubuntu (POSIX)
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+
 #include <Eigen/Dense>
 #include <franka/robot.h>
 #include <franka/model.h>
 #include <franka/gripper.h>
 #include <franka/exception.h>
 
+// --- UDP Sender Helper Class ---
+class UdpSender {
+private:
+    int sockfd;
+    struct sockaddr_in dest_addr;
+    bool initialized = false;
+
+public:
+    UdpSender(const std::string& ip, int port) {
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sockfd >= 0) {
+            memset(&dest_addr, 0, sizeof(dest_addr));
+            dest_addr.sin_family = AF_INET;
+            dest_addr.sin_port = htons(port);
+            inet_pton(AF_INET, ip.c_str(), &dest_addr.sin_addr);
+            initialized = true;
+        } else {
+            std::cerr << "Failed to create UDP socket." << std::endl;
+        }
+    }
+
+    ~UdpSender() {
+        if (sockfd >= 0) close(sockfd);
+    }
+
+    void send(int trigger_value) {
+        if (!initialized) return;
+        std::string msg = std::to_string(trigger_value);
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
+        std::cout << "[UDP] Sent Trigger: [" << trigger_value << "]" << std::endl;
+    }
+};
+
+// --- Modified Waypoint Struct ---
 struct Waypoint {
     std::string name;
     Eigen::Vector3d pos;
@@ -16,33 +58,46 @@ struct Waypoint {
     double duration; 
     bool grasp_after = false;
     bool release_after = false;
+    int trigger_value = 0; // NEW: Added a dedicated trigger value for this waypoint
 };
 
 int main(int argc, char** argv) {
     try {
+        // --- Initialize UDP Connection ---
+        std::string laptop_ip = "10.0.0.2"; 
+        int udp_port = 1000;
+        UdpSender udp(laptop_ip, udp_port);
+
+        // Standard Robot Initialization
         std::string robot_ip = "172.16.0.2";
         franka::Robot robot(robot_ip);
         franka::Gripper gripper(robot_ip);
 
         Eigen::Quaterniond down_ori(0.0, 1.0, 0.0, 0.0);
 
+        // --- Define Path with UDP Triggers ---
         std::vector<Waypoint> path = {
-            {"PRE-PICK",  {0.5546, -0.0486, 0.2273}, down_ori, 4.0}, 
-            {"PICK",      {0.5555, -0.0513, 0.0571}, down_ori, 2.0, true, false}, 
-            {"POST-PICK", {0.4536, 0.3823, 0.5087}, down_ori, 3.0},
-            {"PRE-PLACE", {0.2456, 0.6113, 0.2719}, down_ori, 4.0},
-            {"PLACE",     {0.2456, 0.6113, 0.0691}, down_ori, 2.0, false, true},  
-            {"CLEARANCE", {0.2456, 0.6113, 0.2719}, down_ori, 2.0}
+            {"PRE-PICK",  {0.5546, -0.0486, 0.2273}, down_ori, 4.0, false, false, 11}, 
+            {"PICK",      {0.5555, -0.0513, 0.0571}, down_ori, 2.0, true, false,  12}, 
+            {"POST-PICK", {0.4536, 0.3823, 0.5087}, down_ori, 3.0, false, false, 13},
+            {"PRE-PLACE", {0.2456, 0.6113, 0.2719}, down_ori, 4.0, false, false, 14},
+            {"PLACE",     {0.2456, 0.6113, 0.0691}, down_ori, 2.0, false, true,  15},  
+            {"CLEARANCE", {0.2456, 0.6113, 0.2719}, down_ori, 2.0, false, false, 16}
         };
 
         std::array<double, 7> home_pos = {{-0.0001, -0.7852, 0.0002, -2.3559, 0.0007, 1.5711, 0.7851}};
 
         std::cout << "Starting Pure C++ Pick and Place (Strict Position Control)..." << std::endl;
+        
+        udp.send(1); // TRIGGER 1: Experiment Start
         gripper.move(0.08, 0.1);
 
         // --- EXECUTE CARTESIAN PATH ---
         for (const auto& point : path) {
             std::cout << ">>> Moving to: " << point.name << std::endl;
+            
+            // Send trigger exactly before motion begins
+            udp.send(point.trigger_value); 
 
             Eigen::Vector3d start_pos;
             Eigen::Quaterniond start_ori;
@@ -52,9 +107,7 @@ int main(int argc, char** argv) {
             robot.control([&](const franka::RobotState& robot_state, franka::Duration period) -> franka::CartesianPose {
                 time += period.toSec();
                 
-                // CRITICAL FIX: Capture the exact Commanded pose inside the loop
                 if (first_tick) {
-                    // Notice the _c below! This ensures 0.0 acceleration on the first tick.
                     Eigen::Affine3d initial_transform(Eigen::Matrix4d::Map(robot_state.O_T_EE_c.data()));
                     start_pos = initial_transform.translation();
                     start_ori = Eigen::Quaterniond(initial_transform.rotation());
@@ -83,11 +136,12 @@ int main(int argc, char** argv) {
             // Action Phase
             if (point.grasp_after) {
                 std::cout << "Action: Grasping object..." << std::endl;
-                // width [m], speed [m/s], force [Newtons], epsilon_inner [m], epsilon_outer [m]
+                udp.send(20); // TRIGGER 20: Grasping started
                 gripper.grasp(0.04, 0.1, 40.0, 0.02, 0.02);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             } else if (point.release_after) {
                 std::cout << "Action: Releasing object..." << std::endl;
+                udp.send(21); // TRIGGER 21: Releasing started
                 gripper.move(0.08, 0.1);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
@@ -95,6 +149,8 @@ int main(int argc, char** argv) {
 
         // --- RETURN TO HOME (JOINT CONTROL) ---
         std::cout << "\n>>> Returning to Safe Home Position..." << std::endl;
+        udp.send(30); // TRIGGER 30: Returning Home
+
         std::array<double, 7> start_q;
         bool home_tick = true;
         double time_j = 0.0;
@@ -103,7 +159,6 @@ int main(int argc, char** argv) {
         robot.control([&](const franka::RobotState& robot_state, franka::Duration period) -> franka::JointPositions {
             time_j += period.toSec();
             
-            // CRITICAL FIX: Capture commanded joints (q_c) on first tick
             if (home_tick) {
                 start_q = robot_state.q_d; 
                 home_tick = false;
@@ -123,12 +178,10 @@ int main(int argc, char** argv) {
         });
 
         std::cout << "Pick and Place Complete!" << std::endl;
+        udp.send(99); // TRIGGER 99: Experiment Finished
 
     } catch (const franka::Exception& e) { 
         std::cerr << "Hardware Exception: " << e.what() << std::endl; 
-        // Automatic reflex recovery (optional, but nice if you crash a lot)
-        // franka::Robot robot(robot_ip);
-        // robot.automaticErrorRecovery();
         return -1; 
     }
     return 0;
