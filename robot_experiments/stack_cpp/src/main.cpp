@@ -3,12 +3,64 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <string>
+
+// Networking headers for Ubuntu (POSIX)
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+
 #include <Eigen/Dense>
 #include <franka/robot.h>
 #include <franka/model.h>
 #include <franka/gripper.h>
 #include <franka/exception.h>
 
+// --- UDP Sender Helper Class (Dual Target) ---
+class UdpSender {
+private:
+    int sockfd;
+    struct sockaddr_in eeg_addr;
+    struct sockaddr_in video_addr;
+    bool initialized = false;
+
+public:
+    UdpSender(const std::string& eeg_ip, int eeg_port, const std::string& video_ip, int video_port) {
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sockfd >= 0) {
+            memset(&eeg_addr, 0, sizeof(eeg_addr));
+            eeg_addr.sin_family = AF_INET;
+            eeg_addr.sin_port = htons(eeg_port);
+            inet_pton(AF_INET, eeg_ip.c_str(), &eeg_addr.sin_addr);
+
+            memset(&video_addr, 0, sizeof(video_addr));
+            video_addr.sin_family = AF_INET;
+            video_addr.sin_port = htons(video_port);
+            inet_pton(AF_INET, video_ip.c_str(), &video_addr.sin_addr);
+
+            initialized = true;
+        } else {
+            std::cerr << "Failed to create UDP socket." << std::endl;
+        }
+    }
+
+    ~UdpSender() {
+        if (sockfd >= 0) close(sockfd);
+    }
+
+    void send(int trigger_value) {
+        if (!initialized) return;
+        std::string msg = std::to_string(trigger_value);
+        
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&eeg_addr, sizeof(eeg_addr));
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&video_addr, sizeof(video_addr));
+        
+        std::cout << "[UDP] Sent Trigger: [" << trigger_value << "]" << std::endl;
+    }
+};
+
+// --- MODIFIED: Added Trigger Fields ---
 struct Waypoint {
     std::string name;
     Eigen::Vector3d pos;
@@ -16,6 +68,8 @@ struct Waypoint {
     double duration; 
     bool grasp_after = false;
     bool release_after = false;
+    int trigger_motion = 0; // Fired right before the robot moves
+    int trigger_action = 0; // Fired right before the gripper actuates
 };
 
 struct CubeData {
@@ -27,6 +81,15 @@ struct CubeData {
 
 int main(int argc, char** argv) {
     try {
+        // --- Initialize Dual UDP Connection ---
+        std::string eeg_ip = "10.0.0.2"; 
+        int eeg_port = 1000;
+        std::string video_ip = "127.0.0.1"; 
+        int video_port = 5005;              
+        
+        UdpSender udp(eeg_ip, eeg_port, video_ip, video_port);
+
+        // --- Robot Initialization ---
         std::string robot_ip = "172.16.0.2";
         franka::Robot robot(robot_ip);
         franka::Gripper gripper(robot_ip);
@@ -61,20 +124,21 @@ int main(int argc, char** argv) {
                 {0.2412, 0.6043, 0.1569 + (2 * cube_height)},
                 {0.2412, 0.6043, 0.1169 + (2 * cube_height)}
             },
-            { // CUBE 4 (With your specific correction applied)
+            { // CUBE 4 
                 {0.5162047, 0.8150493, 0.1255967, -1.6094433, -0.0977617, 2.4092304, 1.4764988},
                 {0.5224169, 0.8901614, 0.1188737, -1.5806791, -0.1020845, 2.4553718, 1.4788992},
                 {0.2412, 0.6043, 0.1569 + (3 * cube_height)},
-                {0.2412, 0.6043, 0.1069 + (3 * cube_height)} // Corrected 0.1069
+                {0.2412, 0.6043, 0.1069 + (3 * cube_height)} 
             }
         };
 
         std::array<double, 7> home_pos = {{-0.0001323, -0.7852356, 0.0002684, -2.3559399, 0.0007338, 1.5711873, 0.7851058}};
 
-        // --- BUILD THE MASTER SEQUENCE ---
+        // --- BUILD THE MASTER SEQUENCE (WITH TRIGGERS) ---
         std::vector<Waypoint> path;
         for (size_t i = 0; i < cubes.size(); ++i) {
             std::string prefix = "CUBE " + std::to_string(i + 1) + " ";
+            int base = (i + 1) * 10; // Cube 1 = 10, Cube 2 = 20, etc.
             
             // Convert Joints to Cartesian on the fly
             auto pre_pick_arr = model.pose(franka::Frame::kEndEffector, cubes[i].pre_pick_q, F_T_EE, EE_T_K);
@@ -83,33 +147,35 @@ int main(int argc, char** argv) {
             auto pick_arr = model.pose(franka::Frame::kEndEffector, cubes[i].pick_q, F_T_EE, EE_T_K);
             Eigen::Affine3d pick_pose(Eigen::Matrix4d::Map(pick_arr.data()));
 
-            // Define the 7 steps for this specific cube
-            path.push_back({prefix + "PRE-PICK", pre_pick_pose.translation(), down_ori, 6.0, false, false});
-            path.push_back({prefix + "PICK", pick_pose.translation(), down_ori, 2.0, true, false});
-            path.push_back({prefix + "LIFT", pre_pick_pose.translation(), down_ori, 1.5, false, false});
-            
-            // Intermediate Pose (with finger offset subtracted)
-            path.push_back({prefix + "INTERMEDIATE", {0.4536, 0.3823, 0.25 - finger_offset}, down_ori, 3.0, false, false});
+            // Define the steps and embed the triggers dynamically
+            path.push_back({prefix + "PRE-PICK", pre_pick_pose.translation(), down_ori, 6.0, false, false, base + 1, 0});
+            path.push_back({prefix + "PICK", pick_pose.translation(), down_ori, 2.0, true, false, base + 2, base + 3});
+            path.push_back({prefix + "LIFT", pre_pick_pose.translation(), down_ori, 1.5, false, false, base + 4, 0});
+            path.push_back({prefix + "INTERMEDIATE", {0.4536, 0.3823, 0.25 - finger_offset}, down_ori, 3.0, false, false, base + 5, 0});
             
             // Place Sequence
             Eigen::Vector3d pre_place = cubes[i].pre_place_xyz;
             pre_place.z() -= finger_offset;
-            path.push_back({prefix + "PRE-PLACE", pre_place, down_ori, 3.0, false, false});
+            path.push_back({prefix + "PRE-PLACE", pre_place, down_ori, 3.0, false, false, base + 6, 0});
 
             Eigen::Vector3d place = cubes[i].place_xyz;
             place.z() -= finger_offset;
-            path.push_back({prefix + "PLACE", place, down_ori, 2.0, false, true});
+            path.push_back({prefix + "PLACE", place, down_ori, 2.0, false, true, base + 7, base + 8});
 
             // Clearance
-            path.push_back({prefix + "CLEARANCE", pre_place, down_ori, 1.5, false, false});
+            path.push_back({prefix + "CLEARANCE", pre_place, down_ori, 1.5, false, false, base + 9, 0});
         }
 
         std::cout << "Starting Strict Position Control Stacking Sequence..." << std::endl;
+        udp.send(1); // TRIGGER 1: Experiment Start
         gripper.move(0.08, 0.1);
 
         // --- EXECUTE MASTER CARTESIAN PATH ---
         for (const auto& point : path) {
             std::cout << ">>> Moving to: " << point.name << std::endl;
+
+            // Fire motion trigger just before loop begins
+            udp.send(point.trigger_motion);
 
             Eigen::Vector3d start_pos;
             Eigen::Quaterniond start_ori;
@@ -119,7 +185,6 @@ int main(int argc, char** argv) {
             robot.control([&](const franka::RobotState& robot_state, franka::Duration period) -> franka::CartesianPose {
                 time += period.toSec();
                 
-                // Read commanded pose to prevent acceleration faults!
                 if (first_tick) {
                     Eigen::Affine3d initial_transform(Eigen::Matrix4d::Map(robot_state.O_T_EE_c.data()));
                     start_pos = initial_transform.translation();
@@ -127,7 +192,6 @@ int main(int argc, char** argv) {
                     first_tick = false;
                 }
 
-                // S-Curve Interpolation for smooth velocity
                 double u = (time >= point.duration) ? 1.0 : 0.5 * (1.0 - std::cos(M_PI * time / point.duration));
 
                 Eigen::Vector3d current_target_pos = start_pos + u * (point.pos - start_pos);
@@ -147,13 +211,15 @@ int main(int argc, char** argv) {
                 return franka::CartesianPose(pose_array);
             });
 
-            // Gripper Action Phase (Matches your Python params)
+            // Gripper Action Phase 
             if (point.grasp_after) {
                 std::cout << "    [GRASPING]" << std::endl;
+                udp.send(point.trigger_action); // Fire grasp trigger
                 gripper.grasp(0.02, 0.1, 20.0, 0.02, 0.02);
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             } else if (point.release_after) {
                 std::cout << "    [RELEASING]" << std::endl;
+                udp.send(point.trigger_action); // Fire release trigger
                 gripper.move(0.08, 0.1);
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
@@ -161,6 +227,8 @@ int main(int argc, char** argv) {
 
         // --- RETURN TO HOME (JOINT CONTROL) ---
         std::cout << "\n>>> Sequence Complete! Returning to Home..." << std::endl;
+        udp.send(90); // TRIGGER 90: Returning Home
+
         std::array<double, 7> start_q;
         bool home_tick = true;
         double time_j = 0.0;
@@ -169,7 +237,6 @@ int main(int argc, char** argv) {
         robot.control([&](const franka::RobotState& robot_state, franka::Duration period) -> franka::JointPositions {
             time_j += period.toSec();
             
-            // Read desired joints to prevent motor snapping!
             if (home_tick) {
                 start_q = robot_state.q_d; 
                 home_tick = false;
@@ -189,6 +256,7 @@ int main(int argc, char** argv) {
         });
 
         std::cout << "Stacking Task Successfully Concluded." << std::endl;
+        udp.send(99); // TRIGGER 99: Experiment Complete
 
     } catch (const franka::Exception& e) { 
         std::cerr << "Hardware Exception: " << e.what() << std::endl; 

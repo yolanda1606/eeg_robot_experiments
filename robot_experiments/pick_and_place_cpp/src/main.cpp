@@ -17,21 +17,30 @@
 #include <franka/gripper.h>
 #include <franka/exception.h>
 
-// --- UDP Sender Helper Class ---
+// --- MODIFIED: UDP Sender Helper Class (Dual Target) ---
 class UdpSender {
 private:
     int sockfd;
-    struct sockaddr_in dest_addr;
+    struct sockaddr_in eeg_addr;
+    struct sockaddr_in video_addr;
     bool initialized = false;
 
 public:
-    UdpSender(const std::string& ip, int port) {
+    UdpSender(const std::string& eeg_ip, int eeg_port, const std::string& video_ip, int video_port) {
         sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         if (sockfd >= 0) {
-            memset(&dest_addr, 0, sizeof(dest_addr));
-            dest_addr.sin_family = AF_INET;
-            dest_addr.sin_port = htons(port);
-            inet_pton(AF_INET, ip.c_str(), &dest_addr.sin_addr);
+            // Setup EEG Destination
+            memset(&eeg_addr, 0, sizeof(eeg_addr));
+            eeg_addr.sin_family = AF_INET;
+            eeg_addr.sin_port = htons(eeg_port);
+            inet_pton(AF_INET, eeg_ip.c_str(), &eeg_addr.sin_addr);
+
+            // Setup Video Node Destination
+            memset(&video_addr, 0, sizeof(video_addr));
+            video_addr.sin_family = AF_INET;
+            video_addr.sin_port = htons(video_port);
+            inet_pton(AF_INET, video_ip.c_str(), &video_addr.sin_addr);
+
             initialized = true;
         } else {
             std::cerr << "Failed to create UDP socket." << std::endl;
@@ -45,12 +54,17 @@ public:
     void send(int trigger_value) {
         if (!initialized) return;
         std::string msg = std::to_string(trigger_value);
-        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
-        std::cout << "[UDP] Sent Trigger: [" << trigger_value << "]" << std::endl;
+        
+        // Fire to EEG Laptop
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&eeg_addr, sizeof(eeg_addr));
+        // Fire to Local Python Vision Node
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&video_addr, sizeof(video_addr));
+        
+        std::cout << "[UDP] Sent Trigger: [" << trigger_value << "] to EEG and Video Node" << std::endl;
     }
 };
 
-// --- Modified Waypoint Struct ---
+// --- Waypoint Struct ---
 struct Waypoint {
     std::string name;
     Eigen::Vector3d pos;
@@ -58,15 +72,18 @@ struct Waypoint {
     double duration; 
     bool grasp_after = false;
     bool release_after = false;
-    int trigger_value = 0; // NEW: Added a dedicated trigger value for this waypoint
+    int trigger_value = 0; 
 };
 
 int main(int argc, char** argv) {
     try {
-        // --- Initialize UDP Connection ---
-        std::string laptop_ip = "10.0.0.2"; 
-        int udp_port = 1000;
-        UdpSender udp(laptop_ip, udp_port);
+        // --- MODIFIED: Initialize Dual UDP Connection ---
+        std::string eeg_ip = "10.0.0.2"; 
+        int eeg_port = 1000;
+        std::string video_ip = "127.0.0.1"; // Localhost where Python runs
+        int video_port = 5005;              // The port your Python node listens to
+        
+        UdpSender udp(eeg_ip, eeg_port, video_ip, video_port);
 
         // Standard Robot Initialization
         std::string robot_ip = "172.16.0.2";
@@ -96,7 +113,7 @@ int main(int argc, char** argv) {
         for (const auto& point : path) {
             std::cout << ">>> Moving to: " << point.name << std::endl;
             
-            // Send trigger exactly before motion begins
+            // Send dual-trigger exactly before motion begins
             udp.send(point.trigger_value); 
 
             Eigen::Vector3d start_pos;
@@ -136,12 +153,12 @@ int main(int argc, char** argv) {
             // Action Phase
             if (point.grasp_after) {
                 std::cout << "Action: Grasping object..." << std::endl;
-                udp.send(20); // TRIGGER 20: Grasping started
+                udp.send(20); 
                 gripper.grasp(0.04, 0.1, 40.0, 0.02, 0.02);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             } else if (point.release_after) {
                 std::cout << "Action: Releasing object..." << std::endl;
-                udp.send(21); // TRIGGER 21: Releasing started
+                udp.send(21); 
                 gripper.move(0.08, 0.1);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
@@ -149,7 +166,7 @@ int main(int argc, char** argv) {
 
         // --- RETURN TO HOME (JOINT CONTROL) ---
         std::cout << "\n>>> Returning to Safe Home Position..." << std::endl;
-        udp.send(30); // TRIGGER 30: Returning Home
+        udp.send(30); 
 
         std::array<double, 7> start_q;
         bool home_tick = true;
@@ -178,7 +195,7 @@ int main(int argc, char** argv) {
         });
 
         std::cout << "Pick and Place Complete!" << std::endl;
-        udp.send(99); // TRIGGER 99: Experiment Finished
+        udp.send(99); 
 
     } catch (const franka::Exception& e) { 
         std::cerr << "Hardware Exception: " << e.what() << std::endl; 

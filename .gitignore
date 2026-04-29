@@ -16,3 +16,14 @@ sisyphus_task
 # IDE folders (if you use VSCode etc.)
 .vscode/
 .idea/
+
+# Ignore sensitive tokens
+git_token.txt
+
+# Ignore heavy data and video logs
+data/
+*.avi
+*.csv
+
+# Ignore local python environments
+vision_env/
