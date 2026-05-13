@@ -13,3 +13,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 add_executable(pick_place src/main.cpp)
 target_link_libraries(pick_place Franka::Franka Eigen3::Eigen)
+
+# --- NEW: Your pose reader tool ---
+add_executable(read_pose src/read_pose.cpp)
+target_link_libraries(read_pose Franka::Franka)

@@ -90,8 +90,12 @@ print("Waking up Intel RealSense camera (Single RGB Stream)...")
 pipeline = rs.pipeline()
 config = rs.config()
 
-frame_width = 1280
-frame_height = 720
+# frame_width = 1280
+# frame_height = 720
+# fps = 30
+
+frame_width = 640
+frame_height = 480
 fps = 30
 
 # Request ONLY the clean RGB Color feed

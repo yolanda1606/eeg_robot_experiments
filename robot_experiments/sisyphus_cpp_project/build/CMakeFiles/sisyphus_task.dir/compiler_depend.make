@@ -205,6 +205,48 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/c++/11/limits \
   /usr/include/c++/11/ctime \
   /usr/include/c++/11/bits/parse_numbers.h \
+  /usr/include/c++/11/vector \
+  /usr/include/c++/11/bits/stl_uninitialized.h \
+  /usr/include/c++/11/bits/stl_vector.h \
+  /usr/include/c++/11/bits/stl_bvector.h \
+  /usr/include/c++/11/bits/vector.tcc \
+  /usr/include/x86_64-linux-gnu/sys/socket.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
+  /usr/include/x86_64-linux-gnu/bits/socket.h \
+  /usr/include/x86_64-linux-gnu/bits/socket_type.h \
+  /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
+  /usr/include/x86_64-linux-gnu/asm/socket.h \
+  /usr/include/asm-generic/socket.h \
+  /usr/include/linux/posix_types.h \
+  /usr/include/linux/stddef.h \
+  /usr/include/x86_64-linux-gnu/asm/posix_types.h \
+  /usr/include/x86_64-linux-gnu/asm/posix_types_64.h \
+  /usr/include/asm-generic/posix_types.h \
+  /usr/include/x86_64-linux-gnu/asm/bitsperlong.h \
+  /usr/include/asm-generic/bitsperlong.h \
+  /usr/include/x86_64-linux-gnu/asm/sockios.h \
+  /usr/include/asm-generic/sockios.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
+  /usr/include/arpa/inet.h \
+  /usr/include/netinet/in.h \
+  /usr/include/x86_64-linux-gnu/bits/in.h \
+  /usr/include/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+  /usr/include/linux/close_range.h \
+  /usr/include/fcntl.h \
+  /usr/include/x86_64-linux-gnu/bits/fcntl.h \
+  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
+  /usr/include/linux/falloc.h \
+  /usr/include/x86_64-linux-gnu/bits/stat.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
+  /usr/include/c++/11/cstring \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/eigen3/Eigen/Dense \
   /usr/include/eigen3/Eigen/Core \
   /usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
@@ -224,9 +266,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/assert.h \
   /usr/include/c++/11/functional \
   /usr/include/c++/11/bits/std_function.h \
-  /usr/include/c++/11/cstring \
-  /usr/include/string.h \
-  /usr/include/strings.h \
   /usr/include/c++/11/climits \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
@@ -432,7 +471,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
   /home/sysgen/Projects/Yolanda/libfranka/include/franka/robot.h \
   /usr/include/c++/11/memory \
-  /usr/include/c++/11/bits/stl_uninitialized.h \
   /usr/include/c++/11/bits/stl_raw_storage_iter.h \
   /usr/include/c++/11/bits/align.h \
   /usr/include/c++/11/bit \
@@ -456,14 +494,8 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
   /home/sysgen/Projects/Yolanda/libfranka/include/franka/gripper.h \
   /home/sysgen/Projects/Yolanda/libfranka/include/franka/gripper_state.h \
   /home/sysgen/Projects/Yolanda/libfranka/include/franka/exception.h \
-  /home/sysgen/Projects/Yolanda/libfranka/include/franka/log.h \
-  /usr/include/c++/11/vector \
-  /usr/include/c++/11/bits/stl_vector.h \
-  /usr/include/c++/11/bits/stl_bvector.h \
-  /usr/include/c++/11/bits/vector.tcc
+  /home/sysgen/Projects/Yolanda/libfranka/include/franka/log.h
 
-
-/usr/include/c++/11/bits/vector.tcc:
 
 /home/sysgen/Projects/Yolanda/libfranka/include/franka/exception.h:
 
@@ -491,8 +523,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/stl_raw_storage_iter.h:
 
-/usr/include/c++/11/bits/stl_uninitialized.h:
-
 /home/sysgen/Projects/Yolanda/libfranka/include/franka/lowpass_filter.h:
 
 /usr/include/c++/11/memory:
@@ -502,10 +532,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h:
 
 /usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h:
-
-/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h:
-
-/usr/include/eigen3/Eigen/src/Eigenvalues/EigenSolver.h:
 
 /usr/include/eigen3/Eigen/src/Geometry/arch/Geometry_SIMD.h:
 
@@ -549,23 +575,13 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/eigen3/Eigen/src/Cholesky/LLT.h:
 
-/usr/include/c++/11/vector:
-
-/usr/include/eigen3/Eigen/src/Jacobi/Jacobi.h:
-
 /usr/include/eigen3/Eigen/Jacobi:
 
-/usr/include/eigen3/Eigen/Cholesky:
-
 /usr/include/eigen3/Eigen/src/LU/InverseImpl.h:
-
-/usr/include/eigen3/Eigen/src/misc/Kernel.h:
 
 /usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h:
 
 /usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h:
-
-/usr/include/eigen3/Eigen/src/Core/Reverse.h:
 
 /usr/include/eigen3/Eigen/src/Core/Replicate.h:
 
@@ -613,8 +629,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/eigen3/Eigen/src/Core/products/Parallelizer.h:
 
-/usr/include/eigen3/Eigen/src/Core/SelfAdjointView.h:
-
 /usr/include/eigen3/Eigen/src/Core/TriangularMatrix.h:
 
 /usr/include/eigen3/Eigen/src/Core/PermutationMatrix.h:
@@ -634,10 +648,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/eigen3/Eigen/src/Core/Block.h:
 
 /usr/include/eigen3/Eigen/src/Core/Ref.h:
-
-/usr/include/eigen3/Eigen/src/Core/ConditionEstimator.h:
-
-/usr/include/eigen3/Eigen/src/Core/Map.h:
 
 /usr/include/eigen3/Eigen/src/Core/Stride.h:
 
@@ -667,8 +677,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h:
 
-/usr/include/eigen3/Eigen/src/Core/MatrixBase.h:
-
 /usr/include/eigen3/Eigen/src/Core/Matrix.h:
 
 /usr/include/eigen3/Eigen/src/plugins/ReshapedMethods.h:
@@ -680,8 +688,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/eigen3/Eigen/src/Core/ArithmeticSequence.h:
 
 /usr/include/eigen3/Eigen/src/Core/util/ReshapedHelper.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h:
 
 /usr/include/eigen3/Eigen/src/Core/functors/AssignmentFunctors.h:
 
@@ -696,8 +702,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/eigen3/Eigen/src/Core/MapBase.h:
 
 /usr/include/eigen3/Eigen/src/Core/arch/Default/GenericPacketMathFunctions.h:
-
-/usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h:
 
 /usr/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h:
 
@@ -715,7 +719,93 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/eigen3/Eigen/src/Core/arch/Default/TypeCasting.h:
 
+/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h:
+
+/usr/include/eigen3/Eigen/src/Core/arch/Default/BFloat16.h:
+
+/usr/include/eigen3/Eigen/src/Core/arch/Default/Half.h:
+
+/usr/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h:
+
+/usr/include/eigen3/Eigen/Geometry:
+
+/usr/include/eigen3/Eigen/src/Core/MathFunctionsImpl.h:
+
+/usr/include/eigen3/Eigen/src/Core/functors/BinaryFunctors.h:
+
+/usr/include/eigen3/Eigen/src/Core/NumTraits.h:
+
+/usr/include/eigen3/Eigen/src/Core/SolverBase.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h:
+
+/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/Memory.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/StaticAssert.h:
+
+/usr/include/c++/11/mutex:
+
+/usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/Meta.h:
+
+/usr/include/eigen3/Eigen/src/Geometry/Translation.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/Constants.h:
+
+/usr/include/c++/11/bits/algorithmfwd.h:
+
+/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h:
+
+/usr/include/eigen3/Eigen/src/Core/BooleanRedux.h:
+
+/usr/include/eigen3/Eigen/src/Core/NestByValue.h:
+
+/usr/include/c++/11/bits/stl_algo.h:
+
+/usr/include/eigen3/Eigen/src/misc/RealSvd2x2.h:
+
+/usr/include/c++/11/algorithm:
+
+/usr/include/x86_64-linux-gnu/bits/xopen_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/eigen3/Eigen/src/Householder/HouseholderSequence.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h:
+
+/usr/include/c++/11/bits/stl_tempbuf.h:
+
+/usr/include/c++/11/bits/std_function.h:
+
+/usr/include/eigen3/Eigen/src/QR/FullPivHouseholderQR.h:
+
+/usr/include/eigen3/Eigen/Householder:
+
+/usr/include/eigen3/Eigen/src/Core/DenseBase.h:
+
+/usr/include/assert.h:
+
+/usr/include/c++/11/cassert:
+
+/usr/include/eigen3/Eigen/src/Core/util/MKL_support.h:
+
+/usr/include/c++/11/sstream:
+
 /usr/include/c++/11/bits/cxxabi_forced.h:
+
+/usr/include/c++/11/bits/shared_ptr_base.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/c++/11/bits/basic_string.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
@@ -723,11 +813,11 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
-/usr/include/c++/11/backward/binders.h:
+/usr/include/eigen3/Eigen/src/Core/ConditionEstimator.h:
 
-/usr/include/eigen3/Eigen/src/misc/RealSvd2x2.h:
+/usr/include/eigen3/Eigen/src/Core/Map.h:
 
-/usr/include/c++/11/algorithm:
+/usr/include/x86_64-linux-gnu/bits/struct_stat.h:
 
 /usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h:
 
@@ -747,23 +837,11 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/stl_iterator_base_types.h:
 
-/usr/include/eigen3/Eigen/src/QR/FullPivHouseholderQR.h:
-
-/usr/include/eigen3/Eigen/Householder:
-
-/usr/include/eigen3/Eigen/src/Core/DenseBase.h:
-
-/usr/include/assert.h:
-
 /usr/include/eigen3/Eigen/src/Cholesky/LDLT.h:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
 /usr/include/c++/11/ext/new_allocator.h:
-
-/usr/include/c++/11/mutex:
-
-/usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h:
 
 /usr/include/eigen3/Eigen/src/plugins/BlockMethods.h:
 
@@ -771,25 +849,15 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
 
-/usr/include/c++/11/bits/stl_bvector.h:
+/usr/include/eigen3/Eigen/src/Core/util/IntegralConstant.h:
 
-/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:
+/usr/include/x86_64-linux-gnu/bits/select.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+/usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/c++/11/ext/atomicity.h:
 
 /usr/include/c++/11/bits/stl_pair.h:
-
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/time.h:
-
-/usr/include/eigen3/Eigen/Geometry:
-
-/usr/include/eigen3/Eigen/src/Core/MathFunctionsImpl.h:
 
 /usr/include/eigen3/Eigen/src/misc/Image.h:
 
@@ -811,9 +879,15 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
+/usr/include/c++/11/backward/binders.h:
+
+/usr/include/x86_64-linux-gnu/asm/bitsperlong.h:
+
 /usr/include/c++/11/bits/localefwd.h:
 
-/usr/include/x86_64-linux-gnu/sys/select.h:
+/usr/include/eigen3/Eigen/src/Core/util/XprHelper.h:
+
+/usr/include/c++/11/cctype:
 
 /usr/include/eigen3/Eigen/src/Core/Redux.h:
 
@@ -845,6 +919,10 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/cxxabi_init_exception.h:
 
+/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
+
+/usr/include/c++/11/string:
+
 /usr/include/x86_64-linux-gnu/bits/types/time_t.h:
 
 /usr/include/c++/11/tuple:
@@ -863,11 +941,19 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/exception_ptr.h:
 
+/usr/include/asm-generic/socket.h:
+
 /usr/include/c++/11/bits/invoke.h:
+
+/usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
 
 /usr/include/c++/11/cstdint:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+
+/usr/include/c++/11/functional:
+
+/usr/include/linux/errno.h:
 
 /usr/include/c++/11/bits/shared_ptr.h:
 
@@ -879,11 +965,17 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/eigen3/Eigen/Core:
 
+/usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h:
+
+/usr/include/c++/11/debug/debug.h:
+
+/usr/include/features-time64.h:
+
 /usr/include/c++/11/bits/stringfwd.h:
 
 ../src/main.cpp:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
@@ -893,9 +985,13 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/stdc-predef.h:
 
-/usr/include/c++/11/bits/memoryfwd.h:
+/usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h:
 
-/usr/include/c++/11/bits/stl_function.h:
+/usr/include/asm-generic/posix_types.h:
+
+/usr/include/eigen3/Eigen/src/Core/MatrixBase.h:
+
+/usr/include/x86_64-linux-gnu/bits/fcntl.h:
 
 /usr/include/eigen3/Eigen/src/Eigenvalues/HessenbergDecomposition.h:
 
@@ -908,8 +1004,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/11/ext/type_traits.h:
 
 /usr/include/c++/11/ext/numeric_traits.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/MKL_support.h:
 
 /usr/include/features.h:
 
@@ -935,10 +1029,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/include/linux/errno.h:
-
-/usr/include/c++/11/functional:
-
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
@@ -948,6 +1038,8 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h:
 
 /usr/include/c++/11/debug/assertions.h:
+
+/usr/include/linux/close_range.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
@@ -965,13 +1057,13 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
 
+/usr/include/x86_64-linux-gnu/bits/confname.h:
+
 /usr/include/eigen3/Eigen/src/Core/VectorBlock.h:
 
 /usr/include/c++/11/ostream:
 
 /usr/include/c++/11/bits/unique_ptr.h:
-
-/usr/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
 
@@ -987,25 +1079,29 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
 
+/usr/include/arpa/inet.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
-
-/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/Memory.h:
 
 /usr/include/c++/11/cwchar:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
 
+/usr/include/unistd.h:
+
 /usr/include/c++/11/bits/stl_algobase.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h:
+
+/usr/include/x86_64-linux-gnu/bits/sockaddr.h:
 
 /usr/include/c++/11/bits/nested_exception.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
-/usr/include/c++/11/bits/std_function.h:
+/usr/include/eigen3/Eigen/src/Core/SelfAdjointView.h:
 
-/usr/include/c++/11/bits/stl_tempbuf.h:
+/usr/include/netinet/in.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
@@ -1015,29 +1111,11 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/range_access.h:
 
-/usr/include/c++/11/bits/stl_vector.h:
-
-/usr/include/c++/11/cstddef:
-
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
-
-/usr/include/x86_64-linux-gnu/bits/local_lim.h:
-
-/usr/include/c++/11/bits/shared_ptr_base.h:
-
-/usr/include/c++/11/bits/basic_string.h:
-
-/usr/include/linux/limits.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h:
 
-/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur.h:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h:
-
-/usr/include/c++/11/bits/exception_defines.h:
+/usr/include/x86_64-linux-gnu/asm/posix_types_64.h:
 
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
@@ -1045,13 +1123,15 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/typeinfo:
 
-/usr/include/eigen3/Eigen/src/Geometry/Translation.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/Constants.h:
-
 /usr/include/c++/11/bits/move.h:
 
 /usr/include/c++/11/bits/hash_bytes.h:
+
+/usr/include/c++/11/climits:
+
+/usr/include/c++/11/bits/sstream.tcc:
+
+/usr/include/c++/11/new:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
 
@@ -1065,10 +1145,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/functexcept.h:
 
-/usr/include/c++/11/bits/concept_check.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
-
 /home/sysgen/Projects/Yolanda/libfranka/include/franka/model.h:
 
 /usr/include/c++/11/streambuf:
@@ -1079,7 +1155,9 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
 
-/usr/include/x86_64-linux-gnu/bits/xopen_lim.h:
+/usr/include/eigen3/Eigen/src/misc/Kernel.h:
+
+/usr/include/x86_64-linux-gnu/bits/stat.h:
 
 /usr/include/ctype.h:
 
@@ -1092,6 +1170,10 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/11/bits/ostream.tcc:
 
 /usr/include/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/asm/socket.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
@@ -1117,6 +1199,10 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/alloca.h:
 
+/usr/include/c++/11/bits/stl_heap.h:
+
+/usr/include/c++/11/bits/std_abs.h:
+
 /usr/include/eigen3/Eigen/src/Core/util/Macros.h:
 
 /usr/include/c++/11/cstdio:
@@ -1124,14 +1210,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
 /usr/include/c++/11/chrono:
-
-/usr/include/c++/11/cctype:
-
-/usr/include/eigen3/Eigen/src/Core/util/XprHelper.h:
-
-/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h:
-
-/usr/include/eigen3/Eigen/src/Core/arch/Default/BFloat16.h:
 
 /usr/include/stdio.h:
 
@@ -1163,10 +1241,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/asm-generic/errno.h:
 
-/usr/include/eigen3/Eigen/src/Core/SolverBase.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h:
-
 /usr/include/eigen3/Eigen/Eigenvalues:
 
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
@@ -1190,6 +1264,10 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h:
 
 /usr/include/c++/11/system_error:
+
+/usr/include/c++/11/cstddef:
+
+/usr/include/c++/11/bits/stl_vector.h:
 
 /usr/include/c++/11/ios:
 
@@ -1225,6 +1303,10 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/bits/basic_ios.tcc:
 
+/usr/include/eigen3/Eigen/src/Core/Reverse.h:
+
+/usr/include/asm-generic/sockios.h:
+
 /usr/include/c++/11/istream:
 
 /usr/include/eigen3/Eigen/src/Core/Diagonal.h:
@@ -1232,16 +1314,6 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/11/bits/istream.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
-
-/usr/include/c++/11/cassert:
-
-/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h:
-
-/usr/include/eigen3/Eigen/src/Core/BooleanRedux.h:
-
-/usr/include/eigen3/Eigen/src/Core/NestByValue.h:
-
-/usr/include/c++/11/bits/stl_algo.h:
 
 /usr/include/eigen3/Eigen/src/LU/Determinant.h:
 
@@ -1253,13 +1325,11 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
 
+/usr/include/linux/posix_types.h:
+
 /home/sysgen/Projects/Yolanda/libfranka/include/franka/command_types.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
-
-/usr/include/c++/11/bits/postypes.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
 
@@ -1277,23 +1347,55 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/array:
 
-/usr/include/c++/11/bits/sstream.tcc:
-
-/usr/include/c++/11/new:
-
-/usr/include/c++/11/climits:
-
 /usr/include/c++/11/bits/unique_lock.h:
 
 /usr/include/eigen3/Eigen/src/Core/AssignEvaluator.h:
 
 /usr/include/c++/11/bits/uses_allocator.h:
 
+/usr/include/x86_64-linux-gnu/bits/in.h:
+
+/usr/include/c++/11/bits/postypes.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+
+/usr/include/linux/falloc.h:
+
+/usr/include/linux/stddef.h:
+
 /usr/include/c++/11/bits/refwrap.h:
 
 /usr/include/c++/11/thread:
 
 /usr/include/c++/11/ratio:
+
+/usr/include/c++/11/limits:
+
+/usr/include/c++/11/bits/parse_numbers.h:
+
+/usr/include/eigen3/Eigen/src/Jacobi/Jacobi.h:
+
+/usr/include/c++/11/vector:
+
+/usr/include/eigen3/Eigen/src/Core/MathFunctions.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
+
+/usr/include/c++/11/bits/stl_uninitialized.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+
+/usr/include/c++/11/bits/stl_bvector.h:
+
+/usr/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h:
+
+/usr/include/c++/11/bits/vector.tcc:
 
 /usr/include/eigen3/Eigen/src/LU/FullPivLU.h:
 
@@ -1303,11 +1405,57 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 
 /usr/include/c++/11/cstring:
 
-/usr/include/eigen3/Eigen/src/Core/util/StaticAssert.h:
+/usr/include/x86_64-linux-gnu/asm/sockios.h:
 
-/usr/include/c++/11/limits:
+/usr/include/c++/11/bits/memoryfwd.h:
 
-/usr/include/c++/11/bits/parse_numbers.h:
+/usr/include/c++/11/bits/stl_function.h:
+
+/usr/include/x86_64-linux-gnu/sys/socket.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h:
+
+/usr/include/x86_64-linux-gnu/bits/socket.h:
+
+/usr/include/x86_64-linux-gnu/bits/socket_type.h:
+
+/usr/include/x86_64-linux-gnu/asm/posix_types.h:
+
+/usr/include/c++/11/bits/concept_check.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
+
+/usr/include/asm-generic/bitsperlong.h:
+
+/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h:
+
+/usr/include/eigen3/Eigen/src/Eigenvalues/EigenSolver.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur.h:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h:
+
+/usr/include/c++/11/bits/exception_defines.h:
+
+/usr/include/x86_64-linux-gnu/bits/environments.h:
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
+
+/usr/include/eigen3/Eigen/Cholesky:
+
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
+
+/usr/include/fcntl.h:
+
+/usr/include/c++/11/bits/streambuf.tcc:
+
+/usr/include/string.h:
 
 /usr/include/eigen3/Eigen/src/Core/products/SelfadjointRank2Update.h:
 
@@ -1322,49 +1470,3 @@ CMakeFiles/sisyphus_task.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/eigen3/Eigen/src/Core/CwiseUnaryView.h:
 
 /usr/include/c++/11/stdlib.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/Meta.h:
-
-/usr/include/c++/11/sstream:
-
-/usr/include/c++/11/bits/streambuf.tcc:
-
-/usr/include/string.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h:
-
-/usr/include/eigen3/Eigen/src/Householder/HouseholderSequence.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
-
-/usr/include/c++/11/string:
-
-/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
-
-/usr/include/c++/11/bits/algorithmfwd.h:
-
-/usr/include/c++/11/bits/std_abs.h:
-
-/usr/include/c++/11/bits/stl_heap.h:
-
-/usr/include/x86_64-linux-gnu/bits/select.h:
-
-/usr/include/x86_64-linux-gnu/bits/time.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/IntegralConstant.h:
-
-/usr/include/eigen3/Eigen/src/Core/functors/BinaryFunctors.h:
-
-/usr/include/eigen3/Eigen/src/Core/NumTraits.h:
-
-/usr/include/eigen3/Eigen/src/Core/MathFunctions.h:
-
-/usr/include/c++/11/debug/debug.h:
-
-/usr/include/features-time64.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h:
-
-/usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h:
-
-/usr/include/eigen3/Eigen/src/Core/arch/Default/Half.h:

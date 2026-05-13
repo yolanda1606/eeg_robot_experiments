@@ -94,12 +94,13 @@ int main(int argc, char** argv) {
 
         // --- Define Path with UDP Triggers ---
         std::vector<Waypoint> path = {
-            {"PRE-PICK",  {0.5546, -0.0486, 0.2273}, down_ori, 4.0, false, false, 11}, 
-            {"PICK",      {0.5555, -0.0513, 0.0571}, down_ori, 2.0, true, false,  12}, 
-            {"POST-PICK", {0.4536, 0.3823, 0.5087}, down_ori, 3.0, false, false, 13},
-            {"PRE-PLACE", {0.2456, 0.6113, 0.2719}, down_ori, 4.0, false, false, 14},
-            {"PLACE",     {0.2456, 0.6113, 0.0691}, down_ori, 2.0, false, true,  15},  
-            {"CLEARANCE", {0.2456, 0.6113, 0.2719}, down_ori, 2.0, false, false, 16}
+            // Name,        Position {x,y,z},  Orientation,  DURATION (Seconds), Grasp, Release, Trigger
+            {"PRE-PICK",  {0.5546, -0.0486, 0.2273}, down_ori, 1.25, false, false, 11}, 
+            {"PICK",      {0.5555, -0.0513, 0.0571}, down_ori, 1.25, true, false,  12}, 
+            {"POST-PICK", {0.4536, 0.3823, 0.5087}, down_ori, 1.75, false, false, 13},
+            {"PRE-PLACE", {0.2456, 0.6113, 0.2719}, down_ori, 1.75, false, false, 14},
+            {"PLACE",     {0.2456, 0.6113, 0.0691}, down_ori, 1.25, false, true,  15},  
+            {"CLEARANCE", {0.2456, 0.6113, 0.2719}, down_ori, 1.25, false, false, 16}
         };
 
         std::array<double, 7> home_pos = {{-0.0001, -0.7852, 0.0002, -2.3559, 0.0007, 1.5711, 0.7851}};
@@ -171,7 +172,7 @@ int main(int argc, char** argv) {
         std::array<double, 7> start_q;
         bool home_tick = true;
         double time_j = 0.0;
-        double home_duration = 5.0;
+        double home_duration = 2.75;
 
         robot.control([&](const franka::RobotState& robot_state, franka::Duration period) -> franka::JointPositions {
             time_j += period.toSec();

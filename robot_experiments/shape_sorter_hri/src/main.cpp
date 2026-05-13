@@ -3,22 +3,83 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <string>
+
+// Networking headers for Ubuntu (POSIX)
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+
 #include <Eigen/Dense>
 #include <franka/robot.h>
 #include <franka/model.h>
 #include <franka/gripper.h>
 #include <franka/exception.h>
 
+// --- UDP Sender Helper Class (Dual Target) ---
+class UdpSender {
+private:
+    int sockfd;
+    struct sockaddr_in eeg_addr;
+    struct sockaddr_in video_addr;
+    bool initialized = false;
+
+public:
+    UdpSender(const std::string& eeg_ip, int eeg_port, const std::string& video_ip, int video_port) {
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sockfd >= 0) {
+            memset(&eeg_addr, 0, sizeof(eeg_addr));
+            eeg_addr.sin_family = AF_INET;
+            eeg_addr.sin_port = htons(eeg_port);
+            inet_pton(AF_INET, eeg_ip.c_str(), &eeg_addr.sin_addr);
+
+            memset(&video_addr, 0, sizeof(video_addr));
+            video_addr.sin_family = AF_INET;
+            video_addr.sin_port = htons(video_port);
+            inet_pton(AF_INET, video_ip.c_str(), &video_addr.sin_addr);
+
+            initialized = true;
+        } else {
+            std::cerr << "Failed to create UDP socket." << std::endl;
+        }
+    }
+
+    ~UdpSender() {
+        if (sockfd >= 0) close(sockfd);
+    }
+
+    void send(int trigger_value) {
+        if (!initialized) return;
+        std::string msg = std::to_string(trigger_value);
+        
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&eeg_addr, sizeof(eeg_addr));
+        sendto(sockfd, msg.c_str(), msg.length(), 0, (struct sockaddr*)&video_addr, sizeof(video_addr));
+        
+        std::cout << "[UDP] Sent Trigger: [" << trigger_value << "]" << std::endl;
+    }
+};
+
 enum class State { PRE_PICK, PICK, LIFT, HANDOFF, RETURN };
 
+// --- MODIFIED: Added Base Trigger Field ---
 struct ShapePoses {
     std::string name;
+    int base_trigger; 
     Eigen::Affine3d pick;
     Eigen::Affine3d pre_pick;
 };
 
 int main(int argc, char** argv) {
     try {
+        // --- Initialize Dual UDP Connection ---
+        std::string eeg_ip = "10.0.0.2"; 
+        int eeg_port = 1000;
+        std::string video_ip = "127.0.0.1"; 
+        int video_port = 5005;              
+        
+        UdpSender udp(eeg_ip, eeg_port, video_ip, video_port);
+
         std::string robot_ip = "172.16.0.2";
         franka::Robot robot(robot_ip);
         franka::Gripper gripper(robot_ip);
@@ -31,9 +92,10 @@ int main(int argc, char** argv) {
 
         // 2. Convert Joint Recordings to Cartesian
         std::vector<ShapePoses> shape_list;
-        auto convert = [&](std::string name, std::array<double, 7> q_pick) {
+        auto convert = [&](std::string name, int base_trigger, std::array<double, 7> q_pick) {
             ShapePoses s;
             s.name = name;
+            s.base_trigger = base_trigger; // Assign embedded trigger
             auto pose_array = model.pose(franka::Frame::kEndEffector, q_pick, F_T_EE, EE_T_K);
             s.pick = Eigen::Affine3d(Eigen::Matrix4d::Map(pose_array.data()));
             
@@ -45,11 +107,11 @@ int main(int argc, char** argv) {
             shape_list.push_back(s);
         };
 
-        // Your Recorded Joints
-        convert("CIRCLE",    {{-0.091, 0.630, 0.005, -2.101, -0.023, 2.701, 0.692}});
-        convert("RECTANGLE", {{0.087, 0.629, 0.082, -2.087, -0.011, 2.700, 0.929}});
-        convert("TRIANGLE",  {{0.321, 0.729, 0.105, -1.900, -0.110, 2.619, 1.221}});
-        convert("SQUARE",    {{0.522, 0.890, 0.118, -1.580, -0.102, 2.455, 1.478}});
+        // Your Recorded Joints (Now with base triggers assigned)
+        convert("CIRCLE",    10, {{-0.091, 0.630, 0.005, -2.101, -0.023, 2.701, 0.692}});
+        convert("RECTANGLE", 20, {{0.087, 0.629, 0.082, -2.087, -0.011, 2.700, 0.929}});
+        convert("TRIANGLE",  30, {{0.321, 0.729, 0.105, -1.900, -0.110, 2.619, 1.221}});
+        convert("SQUARE",    40, {{0.522, 0.890, 0.118, -1.580, -0.102, 2.455, 1.478}});
 
         // Home Pose for the end of the task
         std::array<double, 7> q_home = {{-0.000, -0.785, 0.000, -2.355, 0.000, 1.571, 0.785}};
@@ -70,6 +132,7 @@ int main(int argc, char** argv) {
         D.bottomRightCorner(3, 3) << 2.0 * sqrt(15.0) * Eigen::Matrix3d::Identity();
 
         std::cout << "Starting Silent Cartesian HRI Shape Sorter..." << std::endl;
+        udp.send(1); // TRIGGER 1: Experiment Start
 
         for (const auto& shape : shape_list) {
             std::cout << "\n>>> PIECE: " << shape.name << std::endl;
@@ -80,13 +143,19 @@ int main(int argc, char** argv) {
                 bool sensing_guard = false;
 
                 if (step == 0) { // PRE-PICK
+                    std::cout << "    Moving to Pre-Pick..." << std::endl;
+                    udp.send(shape.base_trigger + 1);
                     goal_pos = shape.pre_pick.translation();
                     goal_ori = shape.pre_pick.rotation();
                     gripper.move(0.08, 0.1);
                 } else if (step == 1) { // PICK
+                    std::cout << "    Moving to Pick..." << std::endl;
+                    udp.send(shape.base_trigger + 2);
                     goal_pos = shape.pick.translation();
                     goal_ori = shape.pick.rotation();
                 } else if (step == 2) { // HANDOFF
+                    std::cout << "    Moving to Handoff (Awaiting Participant Pull)..." << std::endl;
+                    udp.send(shape.base_trigger + 4);
                     goal_pos = pos_handoff;
                     goal_ori = ori_handoff;
                     sensing_guard = true;
@@ -105,10 +174,14 @@ int main(int argc, char** argv) {
                     if (first_tick) { virtual_pos = current_pos; virtual_ori = current_ori; first_tick = false; }
 
                     double dist_to_goal = (current_pos - goal_pos).norm();
+                    
+                    // --- HRI FORCE SENSING TRIGGER ---
                     if (sensing_guard && dist_to_goal < 0.03) {
                         Eigen::Map<const Eigen::Matrix<double, 6, 1>> F_ext(robot_state.O_F_ext_hat_K.data());
                         if (F_ext.head(3).norm() > 4.5) { 
                             piece_taken = true;
+                            // Fire exact millisecond force limit is crossed!
+                            udp.send(shape.base_trigger + 5); 
                             return franka::MotionFinished(franka::Torques(model.coriolis(robot_state))); 
                         }
                     }
@@ -138,9 +211,13 @@ int main(int argc, char** argv) {
                 });
 
                 if (step == 1) {
+                    std::cout << "    [GRASPING]" << std::endl;
+                    udp.send(shape.base_trigger + 3);
                     gripper.grasp(0.03, 0.1, 60.0, 0.02, 0.02);
                     std::this_thread::sleep_for(std::chrono::milliseconds(500));
                 } else if (piece_taken) {
+                    std::cout << "    [HUMAN TOOK PIECE - RELEASING]" << std::endl;
+                    udp.send(shape.base_trigger + 6);
                     gripper.move(0.08, 0.1);
                     std::this_thread::sleep_for(std::chrono::seconds(1));
                     break; 
@@ -150,6 +227,8 @@ int main(int argc, char** argv) {
 
         // --- FINAL RETURN HOME ---
         std::cout << "\n>>> Task Finished. Returning Home..." << std::endl;
+        udp.send(90); // TRIGGER 90: Return Home
+
         bool home_tick = true;
         Eigen::Vector3d h_virtual_pos;
         Eigen::Quaterniond h_virtual_ori;
@@ -184,6 +263,9 @@ int main(int argc, char** argv) {
             if ((current_pos - home_pose.translation()).norm() < 0.04) return franka::MotionFinished(franka::Torques(tau_array));
             return tau_array;
         });
+
+        std::cout << "Interactive Task Successfully Concluded." << std::endl;
+        udp.send(99); // TRIGGER 99: End Experiment
 
     } catch (const franka::Exception& e) { std::cerr << e.what() << std::endl; return -1; }
     return 0;

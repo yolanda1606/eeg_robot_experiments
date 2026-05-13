@@ -60,10 +60,10 @@ public:
     }
 };
 
-// Data structure for your shapes (MODIFIED to include a base trigger)
+// Data structure for your shapes
 struct Shape {
     std::string name;
-    int base_trigger; // Added to cleanly separate events per shape
+    int base_trigger; 
     std::array<double, 7> pre_pick;
     std::array<double, 7> pick;
     std::array<double, 7> pre_place;
@@ -72,6 +72,21 @@ struct Shape {
 
 int main(int argc, char** argv) {
     try {
+        // --- EXPERIMENT MODE SELECTION ---
+        int mode_input = 0;
+        std::cout << "==========================================\n";
+        std::cout << " Select Experiment Mode:\n";
+        std::cout << "   0: Fault-Free Run (Control)\n";
+        std::cout << "   1: Faulty Run (EEG Surprise Factors)\n";
+        std::cout << "==========================================\n";
+        std::cout << "Choice: ";
+        std::cin >> mode_input;
+        bool is_faulty = (mode_input == 1);
+
+        if (is_faulty) {
+            std::cout << "\n[WARNING] Faults ENABLED. Prepare for sudden movements and drops.\n\n";
+        }
+
         // --- Initialize Dual UDP Connection ---
         std::string eeg_ip = "10.0.0.2"; 
         int eeg_port = 1000;
@@ -140,7 +155,6 @@ int main(int argc, char** argv) {
         Eigen::Quaterniond down_ori(0.0, 1.0, 0.0, 0.0); 
         Eigen::Vector3d lift_pos(0.4536, 0.3823, 0.30);
 
-        // Added base triggers: Circle=10, Rectangle=20, Triangle=30, Square=40
         std::vector<Shape> shapes = {
             {"CIRCLE", 10,
              {-0.0920499, 0.5526700, 0.0070220, -2.1236928, -0.0227715, 2.6450756, 0.6920618},
@@ -177,45 +191,81 @@ int main(int argc, char** argv) {
             // 1. Pick Phase
             std::cout << "Moving to Pre-Pick..." << std::endl;
             udp.send(item.base_trigger + 1); 
-            move_joints(item.pre_pick, 3.0);
+            move_joints(item.pre_pick, 2.5);
             
             std::cout << "Moving to Pick..." << std::endl;
             udp.send(item.base_trigger + 2);
-            move_joints(item.pick, 2.0);
+            move_joints(item.pick, 1.5);
             
             std::cout << "Grasping..." << std::endl;
             udp.send(item.base_trigger + 3);
             gripper.grasp(0.04, 0.1, 60.0, 0.02, 0.02);
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-            // 2. Lift/Transition Phase (Cartesian)
-            std::cout << "Lifting (Cartesian)..." << std::endl;
-            udp.send(item.base_trigger + 4);
-            move_cartesian(lift_pos, down_ori, 3.0);
+            // Define the safe hover joint position you found
+            std::array<double, 7> recover_q = {0.695693, 0.164098, 0.00732913, -1.93717, -0.00220801, 2.0995, 1.48411};
+
+            // 2. Lift/Transition Phase
+            if (is_faulty && item.name == "RECTANGLE") {
+                // --- FAULT 1: DEVIATION RIGHT AFTER PICK ---
+                std::cout << "    [FAULT INJECTED: Veering directly to Wrong Location!]" << std::endl;
+                
+                // TRIGGER 80: The exact millisecond the Error Trajectory begins
+                udp.send(80); 
+                
+                std::array<double, 7> wrong_q = {-0.0684, 0.2537, -0.8500, -2.2450, 0.2818, 2.7106, 0.7612}; 
+                move_joints(wrong_q, 2.5); 
+
+                // 2. Recover to the normal, safe mid-air center point
+                std::cout << "    [RECOVERING: Moving to safe mid-air joint pose...]" << std::endl;
+                
+                // TRIGGER 82: The exact millisecond the Correction/Recovery begins
+                udp.send(82); 
+                
+                move_joints(recover_q, 2.75); 
+
+            } else {
+                // NORMAL LIFT (For all non-faulted shapes, and shapes that aren't the Rectangle)
+                std::cout << "Lifting (Joint Space)..." << std::endl;
+                udp.send(item.base_trigger + 4);
+                move_joints(recover_q, 2.5);
+
+                // --- FAULT 2: GHOST MID-AIR DROP (SQUARE) ---
+                if (is_faulty && item.name == "SQUARE") {
+                    std::cout << "    [FAULT INJECTED: Mid-Air Drop!]" << std::endl;
+                    
+                    // TRIGGER 81: Mid-air drop executes
+                    udp.send(81); 
+                    
+                    gripper.move(0.08, 0.1); // Opens gripper to drop the square
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                    // Will continue smoothly to the Place phase as if nothing happened
+                }
+            }
 
             // 3. Place Phase
             std::cout << "Moving to Pre-Place..." << std::endl;
             udp.send(item.base_trigger + 5);
-            move_joints(item.pre_place, 3.0);
+            move_joints(item.pre_place, 2.5); 
             
             std::cout << "Moving to Place..." << std::endl;
             udp.send(item.base_trigger + 6);
-            move_joints(item.place, 2.0);
+            move_joints(item.place, 0.75);
             
             std::cout << "Releasing..." << std::endl;
             udp.send(item.base_trigger + 7);
             gripper.move(0.08, 0.1);
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
             // 4. Clearance Phase
             std::cout << "Clearance..." << std::endl;
             udp.send(item.base_trigger + 8);
-            move_joints(item.pre_place, 2.0);
+            move_joints(item.pre_place, 1.0);
         }
 
         std::cout << "\n>>> Task Complete. Returning Home..." << std::endl;
         udp.send(90); // TRIGGER 90: Returning Home
-        move_joints(home_joints, 4.0);
+        move_joints(home_joints, 3.0);
         
         std::cout << "Shape Sorter Successfully Concluded." << std::endl;
         udp.send(99); // TRIGGER 99: Experiment Complete
