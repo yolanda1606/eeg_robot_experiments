@@ -26,4 +26,6 @@ data/
 *.csv
 
 # Ignore local python environments
+vision_env/robot_experiments/venv/
+robot_experiments/venv/
 vision_env/

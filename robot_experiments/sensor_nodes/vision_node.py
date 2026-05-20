@@ -9,6 +9,12 @@ import numpy as np
 import pyrealsense2 as rs  
 from deepface import DeepFace
 
+import argparse
+
+parser = argparse.ArgumentParser(description="Vision Node Logger")
+parser.add_argument("--file_suffix", type=str, default="Test", help="Suffix for the file name (e.g., PnP, Stack)")
+args = parser.parse_args()
+
 # --- 1. SETUP NETWORK & VARIABLES ---
 UDP_IP_LISTEN = "127.0.0.1"
 UDP_PORT_LISTEN = 5005
@@ -28,7 +34,9 @@ def udp_listener():
         if data:
             with trigger_lock:
                 latest_trigger = int(data.decode('utf-8'))
-                print(f"Trigger {latest_trigger} received at {time.time()}!")
+
+                human_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
+                print(f"Trigger {latest_trigger} received at {human_time}!")
 
 listener_thread = threading.Thread(target=udp_listener, daemon=True)
 listener_thread.start()
@@ -51,15 +59,15 @@ def face_detector_thread():
         
         if current_frame is not None:
             try:
-                # Using MTCNN: It is highly accurate and ignores robot arms.
-                # The lag won't affect the video because it is in this background thread.
+                # --- MODIFIED SECTION ---
+                # Changed detector_backend to 'retinaface' or 'yolov8'
                 result = DeepFace.analyze(
                     current_frame, 
                     actions=['emotion'], 
                     enforce_detection=True,
-                    # detector_backend='mtcnn' 
-                    detector_backend='opencv' 
+                    detector_backend='retinaface' # Change to 'yolov8' if you prefer
                 )
+                # ------------------------
                 
                 face_data = result[0]
                 region = face_data['region']
@@ -116,8 +124,9 @@ time_stamp = now.strftime("%H-%M-%S")
 save_dir = os.path.join("data", date_folder)
 os.makedirs(save_dir, exist_ok=True)
 
-video_filename = os.path.join(save_dir, f"raw_experiment_video_{time_stamp}.avi")
-csv_filename = os.path.join(save_dir, f"experiment_video_log_{time_stamp}.csv")
+# MODIFIED: Exactly matches your image's naming convention
+video_filename = os.path.join(save_dir, f"raw_experiment_video_{time_stamp}_{args.file_suffix}.avi")
+csv_filename = os.path.join(save_dir, f"experiment_video_{time_stamp}_{args.file_suffix}.csv")
 
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out_video = cv2.VideoWriter(video_filename, fourcc, fps, (frame_width, frame_height))

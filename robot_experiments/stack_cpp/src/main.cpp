@@ -160,13 +160,13 @@ int main(int argc, char** argv) {
             Eigen::Affine3d pick_pose(Eigen::Matrix4d::Map(pick_arr.data()));
 
             // Move to Pre-Pick (Fast speed: 2.5 seconds)
-            path.push_back({prefix + "PRE-PICK", pre_pick_pose.translation(), down_ori, 2.25, false, false, base + 1, 0, false});
+            path.push_back({prefix + "PRE-PICK", pre_pick_pose.translation(), down_ori, 2.5, false, false, base + 1, 0, false});
             
             // Move down to Pick and grasp (Fast speed: 1.5 seconds)
-            path.push_back({prefix + "PICK", pick_pose.translation(), down_ori, 1.25, true, false, base + 2, base + 3, false});
+            path.push_back({prefix + "PICK", pick_pose.translation(), down_ori, 1.5, true, false, base + 2, base + 3, false});
             
             // Move back up (Fast speed: 1.0 seconds)
-            path.push_back({prefix + "LIFT", pre_pick_pose.translation(), down_ori, 0.75, false, false, base + 4, 0, false});
+            path.push_back({prefix + "LIFT", pre_pick_pose.translation(), down_ori, 1.0, false, false, base + 4, 0, false});
 
             // --- 2. LIFT / FAULT 1 PHASE ---
             if (is_faulty && i == 1) { // Cube 2 Fault
@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
             }
 
             // --- FAULT 2: TRUE MID-AIR DROP (Cube 4) ---
-            double transit_duration = 2.25;
+            double transit_duration = 2.75;
             int transit_trigger = base + 5;
 
             // --- FAULT 2: "GHOST" MID-AIR DROP (Cube 4) ---
